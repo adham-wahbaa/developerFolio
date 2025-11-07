@@ -52,6 +52,23 @@ if (USE_GITHUB_DATA === "true") {
           }
         }
       }
+      repositories(first: 6, privacy: PUBLIC, orderBy: {field: STARGAZERS, direction: DESC}) {
+        nodes {
+          name
+          description
+          forkCount
+          stargazers {
+            totalCount
+          }
+          url
+          id
+          diskUsage
+          primaryLanguage {
+            name
+            color
+          }
+        }
+      }
     }
 }
 `

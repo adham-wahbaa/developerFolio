@@ -24,7 +24,49 @@ export default function Projects() {
           throw result;
         })
         .then(response => {
-          setrepoFunction(response.data.user.pinnedItems.edges);
+          const user = response.data.user;
+          const pinned = user?.pinnedItems?.edges || [];
+          if (pinned.length > 0) {
+            setrepoFunction(pinned);
+            return;
+          }
+
+          // Fallback to most-starred public repositories if no pins OR missing repositories in profile.json
+          const repos = user?.repositories?.nodes || [];
+          if (repos.length > 0) {
+            const edgesLike = repos.map(node => ({ node }));
+            setrepoFunction(edgesLike);
+            return;
+          }
+
+          // Final fallback: fetch via GitHub REST API without token
+          const username = (user && user.login) || (openSource.githubUserName || "");
+          if (!username) {
+            setrepoFunction([]);
+            return;
+          }
+          fetch(`https://api.github.com/users/${username}/repos?per_page=6&sort=stargazers`)
+            .then(res => (res.ok ? res.json() : Promise.reject(res)))
+            .then(list => {
+              const mapped = (list || []).map(r => ({
+                node: {
+                  name: r.name,
+                  description: r.description,
+                  forkCount: r.forks_count,
+                  stargazers: { totalCount: r.stargazers_count },
+                  url: r.html_url,
+                  id: String(r.id),
+                  diskUsage: r.size,
+                  primaryLanguage: r.language
+                    ? { name: r.language, color: undefined }
+                    : null
+                }
+              }));
+              setrepoFunction(mapped);
+            })
+            .catch(() => {
+              setrepoFunction([]);
+            });
         })
         .catch(function (error) {
           console.error(
