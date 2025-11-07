@@ -2,6 +2,7 @@ import emoji from "react-easy-emoji";
 import splashAnimation from "./assets/lottie/splashAnimation";
 // import contactMail from "./assets/lottie/email.json"; // ❌ احذف أو عطّل هذا السطر
 
+
 // ================= Splash Screen =================
 const splashScreen = {
   enabled: true,
