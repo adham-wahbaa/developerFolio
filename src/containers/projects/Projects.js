@@ -34,18 +34,21 @@ export default function Projects() {
           // Fallback to most-starred public repositories if no pins OR missing repositories in profile.json
           const repos = user?.repositories?.nodes || [];
           if (repos.length > 0) {
-            const edgesLike = repos.map(node => ({ node }));
+            const edgesLike = repos.map(node => ({node}));
             setrepoFunction(edgesLike);
             return;
           }
 
           // Final fallback: fetch via GitHub REST API without token
-          const username = (user && user.login) || (openSource.githubUserName || "");
+          const username =
+            (user && user.login) || openSource.githubUserName || "";
           if (!username) {
             setrepoFunction([]);
             return;
           }
-          fetch(`https://api.github.com/users/${username}/repos?per_page=6&sort=stargazers`)
+          fetch(
+            `https://api.github.com/users/${username}/repos?per_page=6&sort=stargazers`
+          )
             .then(res => (res.ok ? res.json() : Promise.reject(res)))
             .then(list => {
               const mapped = (list || []).map(r => ({
@@ -53,12 +56,12 @@ export default function Projects() {
                   name: r.name,
                   description: r.description,
                   forkCount: r.forks_count,
-                  stargazers: { totalCount: r.stargazers_count },
+                  stargazers: {totalCount: r.stargazers_count},
                   url: r.html_url,
                   id: String(r.id),
                   diskUsage: r.size,
                   primaryLanguage: r.language
-                    ? { name: r.language, color: undefined }
+                    ? {name: r.language, color: undefined}
                     : null
                 }
               }));
