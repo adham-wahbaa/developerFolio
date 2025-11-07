@@ -157,8 +157,9 @@ const resumeSection = {
 
 // ================= Open Source Section =================
 const openSource = {
-  showGithubProfile: "true",
+  showGithubProfile: true,
   display: true,
+  githubUserName: "adham-wahbaa", // your username here
 };
 
 // ================= Achievement Section =================
